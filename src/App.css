@@ -71,7 +71,7 @@ button {
   color: var(--second-theme);
   border-radius: 10px;
   border: 0;
-  padding: 1rem;
+  padding: 1rem 2rem;
   transition: 0.2s linear;
   font-family: 'Ubuntu Mono', monospace;
 }

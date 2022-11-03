@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 
 export default function ColorGuess() {
   // total correct 
@@ -12,6 +12,8 @@ export default function ColorGuess() {
   // isNewGame
   const [isNewGame, setIsNewGame] = useState(true);
 
+  const messageRef = useRef(null);
+
   useEffect(() => {
     if (isNewGame) {
       const answerIdx = getRange(2);
@@ -20,8 +22,8 @@ export default function ColorGuess() {
         colorList.push(getRandomHexColor());
       }
 
-      console.log(colorList);
-      console.log("answeridx: " + answerIdx);
+      //console.log(colorList);
+      //console.log("answeridx: " + answerIdx);
       setOptions(colorList);
       setAnswer(answerIdx);
       setIsNewGame(false);
@@ -43,30 +45,31 @@ export default function ColorGuess() {
   function checkAnswer(event) {
     if (correct) return;
     if (event.target.innerText === options[answer]) {
-      console.log(answer + "correct");
+      //console.log(answer + "correct");
       setCorrect(true);
       setCount(prevValue => prevValue + 1);
       setTimeout(() => {
         initGame();
       }, 3000);
     }
+    //console.log(messageRef.current)
+    messageRef.current.style.display = "block";
+    
   }
 
   function initGame() {
     setOptions([]);
     setIsNewGame(true);
     setCorrect(false);
+    messageRef.current.style.display = "none";
   }
-
-  const styles = {
-    display: correct && "block"
-  }  
   
   return (
     <main className="game-container">
       <div className="correct-count"><i className="ri-heart-fill favorite"></i> {count}</div>
       <div className="color-block" style={{backgroundColor: options[answer]}}></div>
-      <div className="correct-quiz" style={styles}><i className="ri-heart-fill favorite"></i> Correct
+      <div className="correct-quiz" ref={messageRef}> {correct && <i className="ri-heart-fill favorite"></i>}
+      {correct ? " Correct" : "Incorrect"}
       </div>
       <div className="button-container">
         <button onClick={checkAnswer}>{options[0]}</button>
