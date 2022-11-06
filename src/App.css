@@ -60,7 +60,9 @@
 .correct-quiz {
   position: absolute;
   top: 40%;
-  left: 40%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
   display: none;
   font-size: 1.5rem;
   z-index: 10;
