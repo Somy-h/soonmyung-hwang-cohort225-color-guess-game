@@ -11,6 +11,8 @@ export default function ColorGuess() {
   const [correct, setCorrect] = useState(false);
   // isNewGame
   const [isNewGame, setIsNewGame] = useState(true);
+  // timer countdown
+  const [timerValue, setTimerValue] = useState(-1);
 
   const messageRef = useRef(null);
 
@@ -21,14 +23,23 @@ export default function ColorGuess() {
       for (let i = 0; i < 3; i++) {
         colorList.push(getRandomHexColor());
       }
-
-      //console.log(colorList);
-      //console.log("answeridx: " + answerIdx);
       setOptions(colorList);
       setAnswer(answerIdx);
       setIsNewGame(false);
     }
   }, [isNewGame]);
+
+  // countdown for new game
+  useEffect(() => {
+    if (timerValue > 0) {
+     setTimeout(() => {
+        setTimerValue(prevValue => prevValue - 1)
+      }, 1000);
+    } else if(timerValue === 0) {
+      initGame();
+    }
+  }, [timerValue]);
+
 
   function getRange(num) {
     return Math.floor(Math.random() * (num+ 1));
@@ -45,14 +56,10 @@ export default function ColorGuess() {
   function checkAnswer(event) {
     if (correct) return;
     if (event.target.innerText === options[answer]) {
-      //console.log(answer + "correct");
       setCorrect(true);
       setCount(prevValue => prevValue + 1);
-      setTimeout(() => {
-        initGame();
-      }, 3000);
+      setTimerValue(3);
     }
-    //console.log(messageRef.current)
     messageRef.current.style.display = "block";
     
   }
@@ -66,16 +73,22 @@ export default function ColorGuess() {
   
   return (
     <main className="game-container">
-      <div className="correct-count"><i className="ri-heart-fill favorite"></i> {count}</div>
+      <div className="correct-container"
+        style={correct && timerValue > 0 ? {display: "block"} : {display: "none"}}
+      > 
+        <p className="count-down">{correct && timerValue > 0 ? timerValue : ""}</p>
+        <p className="correct">{correct && <i className="ri-heart-fill favorite"></i>} Correct</p>
+      </div>
       <div className="color-block" style={{backgroundColor: options[answer]}}></div>
-      <div className="correct-quiz" ref={messageRef}> {correct && <i className="ri-heart-fill favorite"></i>}
-      {correct ? " Correct" : "Incorrect"}
+      <div className="correct-quiz" ref={messageRef}> 
+        {!correct && "Incorrect"}
       </div>
       <div className="button-container">
         <button onClick={checkAnswer}>{options[0]}</button>
         <button onClick={checkAnswer}>{options[1]}</button>
         <button onClick={checkAnswer}>{options[2]}</button>
       </div>
+      <div className="correct-count"><i className="ri-heart-fill favorite"></i> {count} corrects</div>
     </main>
   )
 }
